@@ -27,7 +27,7 @@ jobs:
         TICKET_ID: ${{ env.TICKET_ID }}
         PR_URL: ${{ github.event.pull_request.html_url }}
       run: |
-        PAGE_ID=$(curl -X POST 'https://api.notion.com/v1/databases/$NOTION_DATABASE_ID/query' \
+        PAGE_ID=$(curl -v -X POST 'https://api.notion.com/v1/databases/$NOTION_DATABASE_ID/query' \
           -H "Authorization: Bearer $NOTION_API_KEY" \
           -H "Content-Type: application/json" \
           --data '{
@@ -40,7 +40,7 @@ jobs:
           }' | jq -r '.results[0].id')
 
         if [ "$PAGE_ID" != "null" ]; then
-          curl -X PATCH "https://api.notion.com/v1/pages/$PAGE_ID" \
+          curl -v -X PATCH "https://api.notion.com/v1/pages/$PAGE_ID" \
             -H "Authorization: Bearer $NOTION_API_KEY" \
             -H "Content-Type: application/json" \
             --data '{
