@@ -47,7 +47,7 @@ jobs:
             -H "Authorization: Bearer $NOTION_API_KEY" \
             -H "Content-Type: application/json" \
             -H "Notion-Version: 2022-06-28" \
-            --data "{\"properties\":{\"Pull Request URL\":{\"url\":\"$PR_URL\"}}}")
+            --data "{\"properties\":{\"My Github PR\":{\"url\":\"$PR_URL\"}}}")
           echo "Notion Update Response: $UPDATE_RESPONSE"
         else
           echo "No page found for Task Number: $TASK_NUMBER"
