@@ -16,8 +16,7 @@ jobs:
       run: |
         PR_TITLE="${{ github.event.pull_request.title }}"
         PR_BODY="${{ github.event.pull_request.body }}"
-        TICKET_ID=$(echo "$PR_TITLE $PR_BODY" | grep -oE '\[TASK-(\d+)\]')
-        echo "$TICKET_ID"
+        TICKET_ID=$(echo "$PR_TITLE $PR_BODY" | grep -oE 'TASK-[0-9]+' | grep -oE '[0-9]+')
         echo "TICKET_ID=$TICKET_ID" >> $GITHUB_ENV
     
     - name: Update Notion
