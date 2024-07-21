@@ -23,6 +23,11 @@ jobs:
     - name: Debug Task Number
       run: echo "Task Number is ${{ env.TASK_NUMBER }}"
 
+    - name: Debug Secrets
+      run: |
+        echo "Notion Key is ${{ secrets.NOTION_API_KEY }}"
+        echo "Database ID is ${{ secrets.NOTION_DATABASE_ID }}"
+
     - name: Update Notion
       if: env.TASK_NUMBER
       env:
