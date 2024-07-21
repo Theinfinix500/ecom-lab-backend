@@ -11,36 +11,45 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Extract Ticket ID
+    - name: Extract Task Number
       id: extract
       run: |
         PR_TITLE="${{ github.event.pull_request.title }}"
-        PR_BODY="${{ github.event.pull_request.body }}"
-        TICKET_ID=$(echo "$PR_TITLE $PR_BODY" | grep -oE 'TASK-[0-9]+' | grep -oE '[0-9]+')
-        echo "TICKET_ID=$TICKET_ID" >> $GITHUB_ENV
+        echo "Pull Request Title: $PR_TITLE"
+        TASK_NUMBER=$(echo "$PR_TITLE" | grep -oE 'TASK-[0-9]+' | grep -oE '[0-9]+')
+        echo "Extracted Task Number: $TASK_NUMBER"
+        echo "TASK_NUMBER=$TASK_NUMBER" >> $GITHUB_ENV
     
+    - name: Debug Task Number
+      run: echo "Task Number is ${{ env.TASK_NUMBER }}"
+
     - name: Update Notion
-      if: env.TICKET_ID
+      if: env.TASK_NUMBER
       env:
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-        TICKET_ID: ${{ env.TICKET_ID }}
+        TASK_NUMBER: ${{ env.TASK_NUMBER }}
         PR_URL: ${{ github.event.pull_request.html_url }}
       run: |
-        PAGE_ID=$(curl -v -X POST 'https://api.notion.com/v1/databases/$NOTION_DATABASE_ID/query' \
+        echo "Querying Notion for Task Number: $TASK_NUMBER"
+        RESPONSE=$(curl -X POST 'https://api.notion.com/v1/databases/$NOTION_DATABASE_ID/query' \
           -H "Authorization: Bearer $NOTION_API_KEY" \
           -H "Content-Type: application/json" \
           --data '{
             "filter": {
               "property": "ID",
               "unique_id": {
-                "equals": "'"$TICKET_ID"'"
+                "equals": "'"$TASK_NUMBER"'"
               }
             }
-          }' | jq -r '.results[0].id')
+          }')
+        echo "Notion Query Response: $RESPONSE"
+        PAGE_ID=$(echo $RESPONSE | jq -r '.results[0].id')
+        echo "Page ID: $PAGE_ID"
 
         if [ "$PAGE_ID" != "null" ]; then
-          curl -v -X PATCH "https://api.notion.com/v1/pages/$PAGE_ID" \
+          echo "Updating Notion page with Pull Request URL: $PR_URL"
+          UPDATE_RESPONSE=$(curl -X PATCH "https://api.notion.com/v1/pages/$PAGE_ID" \
             -H "Authorization: Bearer $NOTION_API_KEY" \
             -H "Content-Type: application/json" \
             --data '{
@@ -49,5 +58,8 @@ jobs:
                   "url": "'"$PR_URL"'"
                 }
               }
-            }'
+            }')
+          echo "Notion Update Response: $UPDATE_RESPONSE"
+        else
+          echo "No page found for Task Number: $TASK_NUMBER"
         fi
