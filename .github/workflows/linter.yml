@@ -1,0 +1,25 @@
+name: Lint And Test Code Base
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+jobs:
+  run-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Lint and Pretty
+        run: npm run lint:ci
+
+      - name: Test Code
+        run: npm run test
