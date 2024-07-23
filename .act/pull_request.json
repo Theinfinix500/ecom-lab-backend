@@ -1,10 +1,9 @@
 {
-    "pull_request": {
-      "id": 3,
-      "title": "[TASK-64] - Change things",
-      "html_url": "https://github.com/your_repo/pull/123",
-      "state": "open",
-      "merged": false
-    }
+  "pull_request": {
+    "id": 3,
+    "title": "[TASK-64] - Change things",
+    "html_url": "https://github.com/your_repo/pull/123",
+    "state": "open",
+    "merged": false
   }
-  
+}
