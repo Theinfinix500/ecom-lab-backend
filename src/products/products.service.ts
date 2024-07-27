@@ -8,6 +8,14 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 
+export interface FindAllOptions {
+  page?: number;
+  limit?: number;
+  sort?: string;
+  order?: 'ASC' | 'DESC';
+  filter?: { [key: string]: any };
+}
+
 @Injectable()
 export class ProductsService {
   constructor(
@@ -34,8 +42,30 @@ export class ProductsService {
     return this.productRepository.save(product);
   }
 
-  findAll() {
-    return this.productRepository.find();
+  async findAll(options: FindAllOptions = {}): Promise<{
+    data: Product[];
+    count: number;
+    totalPages: number;
+    currentPage: number;
+  }> {
+    const {
+      page = 1,
+      limit = 10,
+      sort = 'createdAt',
+      order = 'DESC',
+      filter = {}
+    } = options;
+
+    const [data, count] = await this.productRepository.findAndCount({
+      where: filter,
+      order: { [sort]: order },
+      skip: (page - 1) * limit,
+      take: limit
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    return { data, count, totalPages, currentPage: page };
   }
 
   findOne(id: number) {

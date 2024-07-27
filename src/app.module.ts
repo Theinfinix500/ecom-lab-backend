@@ -16,7 +16,7 @@ import { ProductsModule } from './products/products.module';
       password: 'mypassword',
       database: 'ecommerce-lab',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false,
+      synchronize: true,
       migrationsTableName: 'migrations',
       migrations: ['../src/migration/*.ts']
     }),

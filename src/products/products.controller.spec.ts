@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsController } from './products.controller';
-import { ProductsService } from './products.service';
+import { FindAllOptions, ProductsService } from './products.service';
 
 export const mockProductsService = {
   create: jest.fn(),
@@ -59,20 +59,46 @@ describe('ProductsController', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of products', async () => {
-      const result = [
-        {
-          id: 1,
-          name: 'Test Product',
-          description: 'Test Description',
-          price: 100
-        }
-      ];
+    it('should return paginated results with metadata', async () => {
+      const result = {
+        data: [
+          {
+            id: 1,
+            name: 'Test Product',
+            description: 'Test Description',
+            price: 100
+          }
+        ],
+        count: 1,
+        totalPages: 1,
+        currentPage: 1
+      };
 
       mockProductsService.findAll.mockResolvedValue(result);
 
-      expect(await controller.findAll()).toEqual(result);
-      expect(mockProductsService.findAll).toHaveBeenCalled();
+      const query: FindAllOptions = {
+        page: 1,
+        limit: 10,
+        sort: 'name',
+        order: 'ASC'
+      };
+
+      expect(
+        await controller.findAll(
+          query.page,
+          query.limit,
+          query.sort,
+          query.order,
+          query
+        )
+      ).toEqual(result);
+      expect(mockProductsService.findAll).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10,
+        sort: 'name',
+        order: 'ASC',
+        filter: {}
+      });
     });
   });
 
