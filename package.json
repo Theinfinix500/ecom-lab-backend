@@ -14,6 +14,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:db": "docker compose up -d",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:ci": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
@@ -22,7 +23,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./data-source.ts",
-    "migration:run": "typeorm-ts-node-commonjs migration:run -d ./data-source.ts"
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d ./data-source.ts",
+    "seed": "ts-node src/seeder/seed.ts"
   },
   "config": {
     "commitizen": {
@@ -33,6 +35,7 @@
     "config": ".cz-config.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/mapped-types": "*",

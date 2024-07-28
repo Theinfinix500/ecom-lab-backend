@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
+import { SeederModule } from './seeder/seeder.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { ProductsModule } from './products/products.module';
       migrations: ['../src/migration/*.ts']
     }),
     ProductsModule,
-    CategoriesModule
+    CategoriesModule,
+    SeederModule
   ],
   controllers: [AppController],
   providers: [AppService]
