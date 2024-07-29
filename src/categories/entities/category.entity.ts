@@ -22,7 +22,7 @@ export class Category {
   @Column('text', { nullable: true })
   description?: string;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   slug: string;
 
   @ManyToOne(() => Category, category => category.children, {
