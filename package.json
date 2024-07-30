@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prepare": "husky",
+    "init:project": "npm run start:db && npm run migration:run && npm run seed",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "commit": "cz",
@@ -14,6 +15,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:db": "docker compose up -d",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:ci": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
@@ -22,7 +24,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./data-source.ts",
-    "migration:run": "typeorm-ts-node-commonjs migration:run -d ./data-source.ts"
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d ./data-source.ts",
+    "seed": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
   },
   "config": {
     "commitizen": {
@@ -33,6 +36,7 @@
     "config": ".cz-config.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/mapped-types": "*",
@@ -44,7 +48,8 @@
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "sqlite3": "^5.1.7",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
@@ -53,6 +58,7 @@
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/express": "^4.17.17",
+    "@types/faker": "^6.6.9",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
     "@types/supertest": "^6.0.0",
@@ -65,7 +71,7 @@
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.2.1",
-    "husky": "^9.1.1",
+    "husky": "9.1.1",
     "jest": "^29.5.0",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.3",

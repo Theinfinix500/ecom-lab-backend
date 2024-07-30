@@ -113,7 +113,7 @@ describe('ProductsController', () => {
 
       mockProductsService.findOne.mockResolvedValue(result);
 
-      expect(await controller.findOne('1')).toEqual(result);
+      expect(await controller.findOne(1)).toEqual(result);
       expect(mockProductsService.findOne).toHaveBeenCalledWith(1);
     });
   });
@@ -128,7 +128,7 @@ describe('ProductsController', () => {
 
       mockProductsService.update.mockResolvedValue(null);
 
-      expect(await controller.update('1', updateProductDto)).toBeNull();
+      expect(await controller.update(1, updateProductDto)).toBeNull();
       expect(mockProductsService.update).toHaveBeenCalledWith(
         1,
         updateProductDto
@@ -140,7 +140,7 @@ describe('ProductsController', () => {
     it('should delete a product', async () => {
       mockProductsService.remove.mockResolvedValue(null);
 
-      expect(await controller.remove('1')).toBeNull();
+      expect(await controller.remove(1)).toBeNull();
       expect(mockProductsService.remove).toHaveBeenCalledWith(1);
     });
   });
