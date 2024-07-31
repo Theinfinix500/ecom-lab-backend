@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 
 import { Category } from '../categories/entities/category.entity';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -13,7 +13,9 @@ export interface FindAllOptions {
   limit?: number;
   sort?: string;
   order?: 'ASC' | 'DESC';
-  filter?: { [key: string]: any };
+  globalFilter?: string;
+  globalFilterFields?: string[];
+  where?: { [key: string]: any };
 }
 
 @Injectable()
@@ -53,11 +55,23 @@ export class ProductsService {
       limit = 10,
       sort = 'createdAt',
       order = 'DESC',
-      filter = {}
+      globalFilter = '',
+      globalFilterFields = []
     } = options;
+    let { where = {} } = options;
+
+    if (globalFilter) {
+      const filters = globalFilterFields.map(field => {
+        return {
+          [field]: ILike(`%${globalFilter}%`)
+        };
+      });
+
+      where = filters;
+    }
 
     const [data, count] = await this.productRepository.findAndCount({
-      where: filter,
+      where,
       order: { [sort]: order },
       skip: (page - 1) * limit,
       take: limit
