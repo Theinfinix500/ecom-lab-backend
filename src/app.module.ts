@@ -18,7 +18,8 @@ import { ProductsModule } from './products/products.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       migrationsTableName: 'migrations',
-      migrations: ['../src/migration/*.ts']
+      migrations: ['../src/migration/*.ts'],
+      logging: true
     }),
     ProductsModule,
     CategoriesModule

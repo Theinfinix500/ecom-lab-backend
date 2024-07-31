@@ -33,6 +33,8 @@ export class ProductsController {
     @Query('limit') limit: number = 10,
     @Query('sort') sort: string = 'createdAt',
     @Query('order') order: 'ASC' | 'DESC' = 'DESC',
+    @Query('globalFilter') globalFilter: string = '',
+    @Query('globalFilterFields') globalFilterFields: string = '',
     @Query() query: { [key: string]: any }
   ): Promise<{
     data: Product[];
@@ -40,12 +42,22 @@ export class ProductsController {
     totalPages: number;
     currentPage: number;
   }> {
-    const filter = { ...query };
-    delete filter.page;
-    delete filter.limit;
-    delete filter.sort;
-    delete filter.order;
-    return this.productsService.findAll({ page, limit, sort, order, filter });
+    const where = { ...query };
+    delete where.page;
+    delete where.limit;
+    delete where.sort;
+    delete where.order;
+    delete where.globalFilter;
+    delete where.globalFilterFields;
+    return this.productsService.findAll({
+      page,
+      limit,
+      sort,
+      order,
+      globalFilter,
+      globalFilterFields: globalFilterFields.split(','),
+      where
+    });
   }
 
   @Get(':id')
@@ -53,6 +65,7 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
+  // TODO should validate request body @UsePipes(new ValidationPipe())
   @Patch(':id')
   update(
     @Param('id', new ParseIntPipe()) id: number,

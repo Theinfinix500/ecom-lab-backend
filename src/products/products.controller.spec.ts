@@ -80,7 +80,9 @@ describe('ProductsController', () => {
         page: 1,
         limit: 10,
         sort: 'name',
-        order: 'ASC'
+        order: 'ASC',
+        globalFilter: '',
+        globalFilterFields: []
       };
 
       expect(
@@ -89,6 +91,8 @@ describe('ProductsController', () => {
           query.limit,
           query.sort,
           query.order,
+          query.globalFilter,
+          '',
           query
         )
       ).toEqual(result);
@@ -97,7 +101,9 @@ describe('ProductsController', () => {
         limit: 10,
         sort: 'name',
         order: 'ASC',
-        filter: {}
+        globalFilter: '',
+        globalFilterFields: [''],
+        where: {}
       });
     });
   });
