@@ -1,7 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ILike, In, Repository } from 'typeorm';
+import {
+  Between,
+  ILike,
+  In,
+  LessThan,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  Repository
+} from 'typeorm';
 
 import { Category } from '../categories/entities/category.entity';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -61,14 +71,14 @@ export class ProductsService {
     let { where = {} } = options;
 
     if (globalFilter) {
-      const filters = globalFilterFields.map(field => {
-        return {
-          [field]: ILike(`%${globalFilter}%`)
-        };
-      });
+      const filters = globalFilterFields.map(field => ({
+        [field]: ILike(`%${globalFilter}%`)
+      }));
 
       where = filters;
     }
+
+    where = this.createWhereClause(where);
 
     const [data, count] = await this.productRepository.findAndCount({
       where,
@@ -114,11 +124,65 @@ export class ProductsService {
       categories // Assign the fetched categories
     });
 
-    // Save and return the updated product
     return this.productRepository.save(product);
   }
 
   async remove(id: number) {
     await this.productRepository.delete(id);
+  }
+
+  private createWhereClause(filters: any): any {
+    const where = [];
+    for (const field in filters) {
+      const { matchMode, value } = filters[field];
+      if (!value) continue;
+
+      if (field === 'price' || field === 'stock') {
+        switch (matchMode) {
+          case 'equals':
+            where.push({ [field]: value });
+            break;
+          case 'gt':
+            where.push({ [field]: MoreThan(value) });
+            break;
+          case 'lt':
+            where.push({ [field]: LessThan(value) });
+            break;
+          case 'gte':
+            where.push({ [field]: MoreThanOrEqual(value) });
+            break;
+          case 'lte':
+            where.push({ [field]: LessThanOrEqual(value) });
+            break;
+          case 'range':
+            if (value.min !== undefined && value.max !== undefined) {
+              where.push({ [field]: Between(value.min, value.max) });
+            }
+            break;
+        }
+      } else {
+        switch (matchMode) {
+          case 'startsWith':
+            where.push({ [field]: ILike(`${value}%`) });
+            break;
+          case 'contains':
+            where.push({ [field]: ILike(`%${value}%`) });
+            break;
+          case 'notContains':
+            where.push({ [field]: Not(ILike(`%${value}%`)) });
+            break;
+          case 'endsWith':
+            where.push({ [field]: ILike(`%${value}`) });
+            break;
+          case 'equals':
+            where.push({ [field]: value });
+            break;
+          case 'notEquals':
+            where.push({ [field]: Not(value) });
+            break;
+        }
+      }
+    }
+    return where.length > 0 ? where : {};
   }
 }

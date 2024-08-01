@@ -49,6 +49,11 @@ export class ProductsController {
     delete where.order;
     delete where.globalFilter;
     delete where.globalFilterFields;
+
+    for (const filter in where) {
+      where[filter] = JSON.parse(where[filter]);
+    }
+
     return this.productsService.findAll({
       page,
       limit,
