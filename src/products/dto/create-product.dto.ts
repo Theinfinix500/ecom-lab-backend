@@ -1,6 +1,7 @@
 import {
   ArrayNotEmpty,
   IsArray,
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -29,6 +30,9 @@ export class CreateProductDto {
   @IsNumber()
   @IsPositive()
   stock: number;
+
+  @IsBoolean()
+  isVisible: boolean;
 
   @IsArray()
   @ArrayNotEmpty()
