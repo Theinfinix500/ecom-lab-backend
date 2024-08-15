@@ -108,14 +108,18 @@ export class ProductsService {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
 
-    // Fetch categories from the database based on the IDs provided
-    const categories = await this.categoryRepository.findBy({
-      id: In(updateProductDto.categories)
-    });
+    let categories;
 
-    // Check if all provided categories exist
-    if (categories.length !== updateProductDto.categories.length) {
-      throw new NotFoundException('Some categories not found');
+    // Fetch categories from the database based on the IDs provided
+    if (updateProductDto.categories) {
+      categories = await this.categoryRepository.findBy({
+        id: In(updateProductDto.categories)
+      });
+
+      // Check if all provided categories exist
+      if (categories.length !== updateProductDto.categories.length) {
+        throw new NotFoundException('Some categories not found');
+      }
     }
 
     // Update product fields

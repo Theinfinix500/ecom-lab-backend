@@ -47,7 +47,8 @@ describe('ProductsController', () => {
         categories: [1],
         images: [],
         tags: [],
-        comparedPrice: 2222
+        comparedPrice: 2222,
+        isVisible: true
       };
       const result = { id: 1, ...createProductDto };
 

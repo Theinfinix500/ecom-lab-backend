@@ -30,6 +30,9 @@ export class Product {
   @Column('int')
   stock: number;
 
+  @Column('boolean')
+  isVisible: boolean;
+
   @ManyToMany(() => Category)
   @JoinTable()
   categories: Category[];
