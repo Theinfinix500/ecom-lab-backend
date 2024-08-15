@@ -8,7 +8,7 @@ export default {
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   synchronize: false,
   migrationsTableName: 'migrations',
-  migrations: ['../src/migration/*.ts'],
+  migrations: ['../src/db/migration/*.ts'],
   seeds: ['src/db/seeds/**/*{.ts,.js}'],
   factories: ['src/db/seeds/factories/**/*{.ts,.js}']
 };
