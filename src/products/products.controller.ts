@@ -70,8 +70,8 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  // TODO should validate request body @UsePipes(new ValidationPipe())
   @Patch(':id')
+  @UsePipes(new ValidationPipe())
   update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateProductDto: UpdateProductDto
