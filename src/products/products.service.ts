@@ -139,7 +139,7 @@ export class ProductsService {
     const where = [];
     for (const field in filters) {
       const { matchMode, value } = filters[field];
-      if (!value) continue;
+      if (value === undefined && value === null) continue;
 
       if (field === 'price' || field === 'stock') {
         switch (matchMode) {
@@ -162,6 +162,12 @@ export class ProductsService {
             if (value.min !== undefined && value.max !== undefined) {
               where.push({ [field]: Between(value.min, value.max) });
             }
+            break;
+        }
+      } else if (field === 'isVisible') {
+        switch (matchMode) {
+          case 'contains':
+            where.push({ [field]: value });
             break;
         }
       } else {
